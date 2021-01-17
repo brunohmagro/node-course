@@ -1,21 +1,26 @@
 import { DbAddAccount } from './db-add-account'
 import { Encrypter } from '../../protocols/encrypter'
 
-interface SutTypes {
+interface SutTypes
+{
   sut: DbAddAccount
   encryptStub: Encrypter
 }
 
-const makeEncrypter = (): Encrypter => {
-  class EncryptStub {
-    async encrypt (value: string): Promise<string> {
+const makeEncrypter = (): Encrypter =>
+{
+  class EncryptStub
+  {
+    async encrypt(value: string): Promise<string>
+    {
       return new Promise(resolve => resolve('hashed_password'))
     }
   }
   return new EncryptStub()
 }
 
-const makeSut = (): SutTypes => {
+const makeSut = (): SutTypes =>
+{
   const encryptStub = makeEncrypter()
   const sut = new DbAddAccount(encryptStub)
   return {
@@ -24,8 +29,10 @@ const makeSut = (): SutTypes => {
   }
 }
 
-describe('DbAddAccount Use case', () => {
-  test('Should call Encrypted with correct password.', async () => {
+describe('DbAddAccount Use case', () =>
+{
+  test('Should call Encrypted with correct password.', async () =>
+  {
     const { sut, encryptStub } = makeSut()
     const encryptSpy = jest.spyOn(encryptStub, 'encrypt')
     const accountData = {
@@ -37,7 +44,8 @@ describe('DbAddAccount Use case', () => {
     expect(encryptSpy).toHaveBeenCalledWith('valid_password')
   })
 
-  test('Should throw if Encrypted throws', async () => {
+  test('Should throw if Encrypted throws', async () =>
+  {
     const { sut, encryptStub } = makeSut()
     jest.spyOn(encryptStub, 'encrypt').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
     const accountData = {
